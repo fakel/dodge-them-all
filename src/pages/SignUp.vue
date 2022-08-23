@@ -20,6 +20,7 @@
                     label="Email"
                     type="email"
                     class="q-ma-sm"
+                    :rules="[val => !!val || 'Email is missing', isValidEmail]"
                 />
             </div>
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -36,6 +37,7 @@
                     label="Password"
                     type="password"
                     class="q-ma-sm"
+                    :rules="[val => !!val || 'Password is missing', isPassValid]"
                 />
             </div>
         </div>
@@ -80,9 +82,21 @@ export default {
     function toLogin() {
       push('/');
     }
+
+    function isValidEmail(val) {
+      const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(val) || 'Invalid email';
+    }
+
+    function isPassValid(val) {
+      return val.length > 7 || 'Password should be at least 8 characters';
+    }
+
     return {
       signUp,
       toLogin,
+      isValidEmail,
+      isPassValid,
       email,
       username,
       password,
