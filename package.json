@@ -1,0 +1,42 @@
+{
+  "name": "dodge-them-all",
+  "version": "0.0.1",
+  "description": "A LoL Community oriented project",
+  "productName": "Dodge Them All Desktop App",
+  "author": "FAKEL",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "start": "quasar dev -m electron",
+    "build": "quasar build -m electron",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "axios": "^0.21.1",
+    "dotenv": "^16.0.1",
+    "league-connect": "^6.0.0-rc8",
+    "node-fetch": "^2.6.7",
+    "pinia": "^2.0.11",
+    "quasar": "^2.6.0",
+    "vue": "^3.0.0",
+    "vue-i18n": "^9.0.0",
+    "vue-router": "^4.0.0"
+  },
+  "devDependencies": {
+    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
+    "@quasar/app-vite": "^1.0.0",
+    "autoprefixer": "^10.4.2",
+    "electron": "^20.0.3",
+    "electron-builder": "^22.14.13",
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-vue": "^9.0.0"
+  },
+  "engines": {
+    "node": "^18 || ^16 || ^14.19",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
