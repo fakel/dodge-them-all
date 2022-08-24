@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "A LoL Community oriented project",
   "productName": "Dodge Them All Desktop App",
+  "license": "Commons Clause - GNU LGPLv3",
   "author": "FAKEL",
   "private": true,
   "scripts": {
