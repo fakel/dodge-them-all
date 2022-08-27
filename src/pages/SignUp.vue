@@ -1,5 +1,8 @@
 <template>
-<div class="q-pa-md row items-center justify-center q-gutter-md" style="height: 90vh">
+<div
+    class="q-pa-md row items-center justify-center q-gutter-md"
+    style="height: 90vh"
+    @keyup.enter="signUp">
    <q-card>
       <q-card-section class="bg-grey-8 text-white">
         <div

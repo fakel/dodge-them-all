@@ -1,5 +1,8 @@
 <template>
-<div class="q-pa-md row items-center justify-center q-gutter-md" style="height: 90vh">
+<div
+    class="q-pa-md row items-center justify-center q-gutter-md"
+    style="height: 90vh"
+    @keyup.enter="login">
    <q-card>
       <q-card-section class="bg-grey-8 text-white">
         <div
@@ -20,6 +23,7 @@
                     label="Email/Username"
                     type="email"
                     class="q-ma-sm"
+                    required
                 />
             </div>
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -28,6 +32,7 @@
                     label="Password"
                     type="password"
                     class="q-ma-sm"
+                    required
                 />
             </div>
         </div>
@@ -57,6 +62,9 @@ export default {
     const password = ref('');
 
     function login() {
+      if (!email.value || !password.value) {
+        return;
+      }
       api.post('/login', {
         email: email.value,
         username: email.value,
@@ -66,6 +74,7 @@ export default {
         session.saveToken(token);
       }).catch((err) => {
         console.log(err);
+        alert('Login failed');
       });
     }
 
