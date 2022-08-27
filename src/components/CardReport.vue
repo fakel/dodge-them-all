@@ -47,9 +47,11 @@
         <q-card-actions align="center" v-if="reportEnabled">
         <q-btn
             v-if="!sent"
-            @click="() => tagUser(summoner.puuid, gameId, 'flamer')"
+            @click="tagUser"
             label="Send Report"
             />
+            <p v-else>Report sent</p>
+            <p v-if="error">{{error}}</p>
         </q-card-actions>
     </q-card>
 </template>
@@ -70,6 +72,7 @@ export default defineComponent({
     const gameId = ref(props.gameId);
     const region = ref(props.region);
     const sent = ref(false);
+    const error = ref('');
 
     const summonerReport = ref({
       gameId: gameId.value,
@@ -88,10 +91,12 @@ export default defineComponent({
     function tagUser() {
       sent.value = true;
       api.post('/report', summonerReport.value)
-        .then(() => {
-          alert('report sent');
-        }).catch((err) => {
-          alert(err);
+        .then((res) => {
+          console.log('res', res);
+          console.log('report sent');
+        }).catch(({ stack, message }) => {
+          console.log(stack, message);
+          error.value = message;
           sent.value = false;
         });
     }
