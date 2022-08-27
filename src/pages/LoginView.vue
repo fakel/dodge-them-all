@@ -42,6 +42,7 @@
         <q-btn flat @click="login">Login</q-btn>
       <a @click="toRegister">Register</a>
       </q-card-actions>
+      <p v-if="error">{{error}}</p>
     </q-card>
 </div>
 </template>
@@ -60,6 +61,7 @@ export default {
     const session = useSessionStore();
     const email = ref('');
     const password = ref('');
+    const error = ref('');
 
     function login() {
       if (!email.value || !password.value) {
@@ -72,9 +74,9 @@ export default {
       }).then((res) => {
         const token = res.data.Authorization;
         session.saveToken(token);
-      }).catch((err) => {
-        console.log(err);
-        alert('Login failed');
+      }).catch(({ stack, message }) => {
+        console.log(stack, message);
+        error.value = 'Login failed';
       });
     }
 
