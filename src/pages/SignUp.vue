@@ -50,6 +50,7 @@
         <q-btn flat @click="signUp">SignUp</q-btn>
         <a @click="toLogin">Login</a>
       </q-card-actions>
+        <p v-if="error">{{error}}</p>
     </q-card>
 </div>
 </template>
@@ -67,6 +68,7 @@ export default {
     const email = ref('');
     const username = ref('');
     const password = ref('');
+    const error = ref('');
     const { push } = useRouter();
 
     function signUp() {
@@ -77,8 +79,9 @@ export default {
       }).then((res) => {
         const token = res.data.Authorization;
         session.saveToken(token);
-      }).catch((err) => {
-        console.log(err);
+      }).catch(({ stack, message }) => {
+        console.log(stack, message);
+        error.value = message;
       });
     }
 
