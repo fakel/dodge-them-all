@@ -7,19 +7,20 @@
     >
       <q-card-section>
         <div class="text-h6">{{summoner.displayName}}</div>
-        <div
-            v-for="property in [
-                'displayName',
-                'puuid',
-                'good',
-                'troll',
-                'inter',
-                'flamer',
-                'leaver' ]"
-            :key="`${property}${summoner.puuid || 0}`"
-            class="text-subtitle2"
-            >
-            {{property}}: {{summoner[property] || 0}}
+        <div class="text-subtitle2">puuid: {{summoner.puuid}}</div>
+        <div class="flex">
+            <div
+                v-for="property in [
+                    'good',
+                    'troll',
+                    'inter',
+                    'flamer',
+                    'leaver' ]"
+                :key="`${property}${summoner.puuid || 0}`"
+                class="text-subtitle2 q-mr-sm"
+                >
+                {{property}}: {{summoner[property] || 0}}
+            </div>
         </div>
       </q-card-section>
 
