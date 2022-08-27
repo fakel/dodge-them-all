@@ -58,48 +58,7 @@ export default defineComponent({
     CardReport,
   },
   setup() {
-    const summonersNames = ref([
-    //   {
-    //     displayName: 'A1',
-    //     internalName: 'A1',
-    //     puuid: 'A1',
-    //     good: 0,
-    //     troll: 0,
-    //     inter: 0,
-    //     flamer: 0,
-    //     leaver: 0,
-    //   },
-    //   {
-    //     displayName: 'B2',
-    //     internalName: 'B2',
-    //     puuid: 'B2',
-    //     good: 0,
-    //     troll: 0,
-    //     inter: 0,
-    //     flamer: 0,
-    //     leaver: 0,
-    //   },
-    //   {
-    //     displayName: 'C3',
-    //     internalName: 'C3',
-    //     puuid: 'C3',
-    //     good: 0,
-    //     troll: 0,
-    //     inter: 0,
-    //     flamer: 0,
-    //     leaver: 0,
-    //   },
-    //   {
-    //     displayName: 'D4',
-    //     internalName: 'D4',
-    //     puuid: 'D4',
-    //     good: 0,
-    //     troll: 0,
-    //     inter: 0,
-    //     flamer: 0,
-    //     leaver: 0,
-    //   },
-    ]);
+    const summonersNames = ref([]);
     const currentUser = ref({});
     const region = ref('LA1');
     const gameId = ref('123456');
@@ -128,130 +87,132 @@ export default defineComponent({
       }
     }
 
-    window.ipcRenderer.receive('summoner-names', async (msg) => {
-      if (msg.error) {
-        console.log(msg.error);
-        return;
-      }
-
-      const filteredSummoners = msg.summonerNames.filter(
-        (summoner) => summoner.puuid !== currentUser.value.puuid,
-        // (summoner) => summoner.puuid !== '',
-      );
-      summonersNames.value = filteredSummoners;
-
-      if (summonersNames.value.length === 4) {
-        if (summonersNames.value.length === 4) {
-          const puuids = summonersNames.value.map((summoner) => summoner.puuid);
-
-          summonersNames.value.forEach(async (summoner, index) => {
-            try {
-              const data = await api.get(`/summoner/${puuids[index]}`);
-
-              summonersNames.value[index].flamer = data.flamer || 0;
-              summonersNames.value[index].good = data.good || 0;
-              summonersNames.value[index].inter = data.inter || 0;
-              summonersNames.value[index].leaver = data.leaver || 0;
-              summonersNames.value[index].troll = data.troll || 0;
-              summonersNames.value[index].reports = data.reports || [];
-            } catch (error) {
-              if (error.response?.status === 404) {
-                const newSummoner = await api.post(
-                  '/summoner',
-                  {
-                    id: summoner.puuid,
-                    displayName: summoner.displayName,
-                    internalName: summoner.internalName,
-                    region: region.value,
-                  },
-                );
-
-                summonersNames.value[index].flamer = newSummoner.flamer || 0;
-                summonersNames.value[index].good = newSummoner.good || 0;
-                summonersNames.value[index].inter = newSummoner.inter || 0;
-                summonersNames.value[index].leaver = newSummoner.leaver || 0;
-                summonersNames.value[index].troll = newSummoner.troll || 0;
-                summonersNames.value[index].reports = [];
-              } else {
-                console.log(error);
-              }
-            }
-          });
+    if (process.env.MODE === 'electron') {
+      window.ipcRenderer.receive('summoner-names', async (msg) => {
+        if (msg.error) {
+          console.log(msg.error);
+          return;
         }
-      }
-    });
 
-    window.ipcRenderer.receive('current-user', async (msg) => {
-      if (
-        msg.error
+        const filteredSummoners = msg.summonerNames.filter(
+          (summoner) => summoner.puuid !== currentUser.value.puuid,
+        // (summoner) => summoner.puuid !== '',
+        );
+        summonersNames.value = filteredSummoners;
+
+        if (summonersNames.value.length === 4) {
+          if (summonersNames.value.length === 4) {
+            const puuids = summonersNames.value.map((summoner) => summoner.puuid);
+
+            summonersNames.value.forEach(async (summoner, index) => {
+              try {
+                const { data } = await api.get(`/summoner/${puuids[index]}`);
+
+                summonersNames.value[index].flamer = data.flamer || '?';
+                summonersNames.value[index].good = data.good || '?';
+                summonersNames.value[index].inter = data.inter || '?';
+                summonersNames.value[index].leaver = data.leaver || '?';
+                summonersNames.value[index].troll = data.troll || '?';
+                summonersNames.value[index].reports = data.reports || '?';
+              } catch (error) {
+                if (error.response?.status === 404) {
+                  const { data } = await api.post(
+                    '/summoner',
+                    {
+                      id: summoner.puuid,
+                      displayName: summoner.displayName,
+                      internalName: summoner.internalName,
+                      region: region.value,
+                    },
+                  );
+
+                  summonersNames.value[index].flamer = data.flamer || '?';
+                  summonersNames.value[index].good = data.good || '?';
+                  summonersNames.value[index].inter = data.inter || '?';
+                  summonersNames.value[index].leaver = data.leaver || '?';
+                  summonersNames.value[index].troll = data.troll || '?';
+                  summonersNames.value[index].reports = '?';
+                } else {
+                  console.log(error);
+                }
+              }
+            });
+          }
+        }
+      });
+
+      window.ipcRenderer.receive('current-user', async (msg) => {
+        if (
+          msg.error
         || !msg.currentUser
         || !msg.currentUser.puuid
         || !msg.region) {
-        summonersNames.value = [];
-        currentUser.value = {};
-        region.value = '';
-        gameId.value = '';
-        dialog.value = false;
-        connected.value = false;
-        return;
-      }
-      currentUser.value = msg.currentUser;
-      region.value = msg.region;
-
-      api.get(`/summoner/${currentUser.value.puuid}`)
-        .catch((err) => {
-          if (err.response.status === 404) {
-            api.post(
-              '/summoner',
-              {
-                id: currentUser.value.puuid,
-                displayName: currentUser.value.displayName,
-                internalName: currentUser.value.internalName,
-                region: region.value,
-                self: true,
-              },
-            ).then(() => console.log('Summoner created'));
-          }
-        });
-    });
-
-    window.ipcRenderer.receive('connection-status', (msg) => {
-      if (msg.error) {
-        console.log(msg.error);
-        connected.value = false;
-      } else {
-        console.log(msg.status);
-        connected.value = true;
-      }
-    });
-
-    window.ipcRenderer.receive('game-id', (msg) => {
-      gameId.value = String(msg.gameId);
-    });
-
-    window.ipcRenderer.receive('phase', (msg) => {
-      console.log(msg);
-      switch (msg) {
-        case 'none':
-        case 'lobby':
-        case 'champ-select':
           summonersNames.value = [];
-          reportEnabled.value = false;
+          currentUser.value = {};
+          region.value = '';
+          gameId.value = '';
           dialog.value = false;
-          break;
-        case 'game-start':
-        case 'in-progress':
-          if (summonersNames.value.length === 0) {
-            force();
-          }
-          dialog.value = true;
-          break;
-        default:
-          reportEnabled.value = true;
-          dialog.value = false;
-          break;
-      }
-    });
+          connected.value = false;
+          return;
+        }
+        currentUser.value = msg.currentUser;
+        region.value = msg.region;
+
+        api.get(`/summoner/${currentUser.value.puuid}`)
+          .catch((err) => {
+            if (err.response.status === 404) {
+              api.post(
+                '/summoner',
+                {
+                  id: currentUser.value.puuid,
+                  displayName: currentUser.value.displayName,
+                  internalName: currentUser.value.internalName,
+                  region: region.value,
+                  self: true,
+                },
+              ).then(() => console.log('Summoner created'));
+            }
+          });
+      });
+
+      window.ipcRenderer.receive('connection-status', (msg) => {
+        if (msg.error) {
+          console.log(msg.error);
+          connected.value = false;
+        } else {
+          console.log(msg.status);
+          connected.value = true;
+        }
+      });
+
+      window.ipcRenderer.receive('game-id', (msg) => {
+        gameId.value = String(msg.gameId);
+      });
+
+      window.ipcRenderer.receive('phase', (msg) => {
+        console.log(msg);
+        switch (msg) {
+          case 'none':
+          case 'lobby':
+          case 'champ-select':
+            summonersNames.value = [];
+            reportEnabled.value = false;
+            dialog.value = false;
+            break;
+          case 'game-start':
+          case 'in-progress':
+            if (summonersNames.value.length === 0) {
+              force();
+            }
+            dialog.value = true;
+            break;
+          default:
+            reportEnabled.value = true;
+            dialog.value = false;
+            break;
+        }
+      });
+    }
 
     return {
       dialog,
