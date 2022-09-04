@@ -25,6 +25,10 @@ Contributed data includes:
 
 If you want to contribute to this project, you are welcome to fork it and open issues to improve it.
 
+## Improvements, Contributions, Requests and Proposals
+
+If you want to contribute, make proposals, send requests or you have any idea you want to see in the app in the future, please comment it on this issue: https://github.com/fakel/dodge-them-all/issues/1
+
 ## Usage
 
 The easiest way to start is to download the .exe installer in the releases section and execute it.
